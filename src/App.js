@@ -1,34 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import useLogic from "./useLogic.js";
 
 function App() {
-  const [text, setText] = useState("");
-  const [timeRemaining, setTimeRemaining] = useState(5);
-
-  function handleChange(e) {
-    const { value } = e.target;
-    setText(value);
-  }
-
-  function calculateWordCount(text) {
-    const wordsArr = text.trim().split(" ");
-    return wordsArr.filter((word) => word !== "").length;
-  }
-
-  useEffect(() => {
-    if (timeRemaining > 0) {
-      setTimeout(() => {
-        setTimeRemaining((time) => time - 1);
-      }, 1000);
-    }
-  }, [timeRemaining]);
+  const {
+    textBoxRef,
+    handleChange,
+    text,
+    isTimeRunning,
+    timeRemaining,
+    startGame,
+    wordCount,
+    startingTime,
+    handleTimeChange,
+  } = useLogic();
 
   return (
     <div>
       <h1>How fast do you type?</h1>
-      <textarea onChange={handleChange} value={text} />
+      <label for="playingTime">Enter your playing time here: </label>
+
+      <input
+        type="text"
+        id="playingTime"
+        value={startingTime}
+        onChange={handleTimeChange}
+      ></input>
+      <textarea
+        ref={textBoxRef}
+        onChange={handleChange}
+        value={text}
+        disabled={!isTimeRunning}
+      />
       <h4>Time remaining: {timeRemaining}</h4>
-      <button onClick={() => setTimeRemaining(10)}>Start</button>
-      <h1>Word count: ???</h1>
+      <button onClick={startGame} disabled={isTimeRunning}>
+        Start
+      </button>
+      <h1>Word count: {wordCount}</h1>
     </div>
   );
 }
